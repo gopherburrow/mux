@@ -1,17 +1,17 @@
-// This file is part of Riot Emergence Mux.
+// This file is part of Gopher Burrow Mux.
 //
-// Riot Emergence Mux is free software: you can redistribute it and/or modify
+// Gopher Burrow Mux is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Riot Emergence Mux is distributed in the hope that it will be useful,
+// Gopher Burrow Mux is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with Riot Emergence Mux.  If not, see <http://www.gnu.org/licenses/>.
+// along with Gopher Burrow Mux.  If not, see <http://www.gnu.org/licenses/>.
 
 //Package mux contains an URL mutiplexing matcher and dispatcher.
 //
@@ -34,7 +34,7 @@ import (
 
 const (
 	//Used in request contexts.
-	ctxGetValue = "github.com/riotemergence/mux Get"
+	ctxGetValue = "gitlab.com/gopherburrow/mux Get"
 )
 
 //Allowed values for Schemes and HTTP Methods used in validations.
