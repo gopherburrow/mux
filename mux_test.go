@@ -1,17 +1,17 @@
-// This file is part of Riot Emergence Mux.
+// This file is part of Gopher Burrow Mux.
 //
-// Riot Emergence Mux is free software: you can redistribute it and/or modify
+// Gopher Burrow Mux is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Riot Emergence Mux is distributed in the hope that it will be useful,
+// Gopher Burrow Mux is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
 
 // You should have received a copy of the GNU Lesser General Public License
-// along with Riot Emergence Mux.  If not, see <http://www.gnu.org/licenses/>.
+// along with Gopher Burrow Mux.  If not, see <http://www.gnu.org/licenses/>.
 package mux_test
 
 import (
@@ -20,7 +20,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/riotemergence/mux"
+	"gitlab.com/gopherburrow/mux"
 )
 
 func emptyHandler(w http.ResponseWriter, r *http.Request) {
@@ -105,7 +105,7 @@ func TestMux_Handle_success(t *testing.T) {
 	}
 
 	{
-		req := httptest.NewRequest(http.MethodPost, "https://localhost:8080/fixed-path/riotemergence", nil)
+		req := httptest.NewRequest(http.MethodPost, "https://localhost:8080/fixed-path/gopherburrow", nil)
 		rr := httptest.NewRecorder()
 		m.ServeHTTP(rr, req)
 		if want, got := "POST+https://localhost:8080/fixed-path/{variable-path}", rr.Body.String(); want != got {
@@ -114,7 +114,7 @@ func TestMux_Handle_success(t *testing.T) {
 	}
 
 	{
-		req := httptest.NewRequest(http.MethodPost, "https://localhost:8080/fixed-path/riotemergence?query=b&query=a", nil)
+		req := httptest.NewRequest(http.MethodPost, "https://localhost:8080/fixed-path/gopherburrow?query=b&query=a", nil)
 		rr := httptest.NewRecorder()
 		m.ServeHTTP(rr, req)
 		if want, got := "POST+https://localhost:8080/fixed-path/{variable-path}?query=a", rr.Body.String(); want != got {
@@ -123,7 +123,7 @@ func TestMux_Handle_success(t *testing.T) {
 	}
 
 	{
-		req := httptest.NewRequest(http.MethodPost, "https://localhost:8080/fixed-path/riotemergence?query&query=a", nil)
+		req := httptest.NewRequest(http.MethodPost, "https://localhost:8080/fixed-path/gopherburrow?query&query=a", nil)
 		rr := httptest.NewRecorder()
 		m.ServeHTTP(rr, req)
 		if want, got := "POST+https://localhost:8080/fixed-path/{variable-path}?query=a", rr.Body.String(); want != got {
@@ -132,7 +132,7 @@ func TestMux_Handle_success(t *testing.T) {
 	}
 
 	{
-		req := httptest.NewRequest(http.MethodPost, "https://localhost:8080/fixed-path/riotemergence?query=b&votz=test&query=c", nil)
+		req := httptest.NewRequest(http.MethodPost, "https://localhost:8080/fixed-path/gopherburrow?query=b&votz=test&query=c", nil)
 		rr := httptest.NewRecorder()
 		m.ServeHTTP(rr, req)
 		if want, got := "POST+https://localhost:8080/fixed-path/{variable-path}?query=c", rr.Body.String(); want != got {
@@ -141,7 +141,7 @@ func TestMux_Handle_success(t *testing.T) {
 	}
 
 	{
-		req := httptest.NewRequest(http.MethodPost, "https://localhost:8080/fixed-path/riotemergence?query=a&votz=test&query=c", nil)
+		req := httptest.NewRequest(http.MethodPost, "https://localhost:8080/fixed-path/gopherburrow?query=a&votz=test&query=c", nil)
 		rr := httptest.NewRecorder()
 		m.ServeHTTP(rr, req)
 		if want, got := "POST+https://localhost:8080/fixed-path/{variable-path}?query=a&query=c", rr.Body.String(); want != got {
@@ -150,7 +150,7 @@ func TestMux_Handle_success(t *testing.T) {
 	}
 
 	{
-		req := httptest.NewRequest(http.MethodPost, "https://localhost:8080/fixed-path/riotemergence?query=b&query=c&votz=x&query=d", nil)
+		req := httptest.NewRequest(http.MethodPost, "https://localhost:8080/fixed-path/gopherburrow?query=b&query=c&votz=x&query=d", nil)
 		rr := httptest.NewRecorder()
 		m.ServeHTTP(rr, req)
 		if want, got := "POST+https://localhost:8080/fixed-path/{variable-path}?query=c", rr.Body.String(); want != got {
@@ -159,7 +159,7 @@ func TestMux_Handle_success(t *testing.T) {
 	}
 
 	{
-		req := httptest.NewRequest(http.MethodPost, "https://localhost:8080/fixed-path/riotemergence?presence=yes", nil)
+		req := httptest.NewRequest(http.MethodPost, "https://localhost:8080/fixed-path/gopherburrow?presence=yes", nil)
 		rr := httptest.NewRecorder()
 		m.ServeHTTP(rr, req)
 		if want, got := "POST+https://localhost:8080/fixed-path/{variable-path}?presence", rr.Body.String(); want != got {
@@ -168,7 +168,7 @@ func TestMux_Handle_success(t *testing.T) {
 	}
 
 	{
-		req := httptest.NewRequest(http.MethodPost, "https://localhost:8080/fixed-path/riotemergence?presence", nil)
+		req := httptest.NewRequest(http.MethodPost, "https://localhost:8080/fixed-path/gopherburrow?presence", nil)
 		rr := httptest.NewRecorder()
 		m.ServeHTTP(rr, req)
 		if want, got := "POST+https://localhost:8080/fixed-path/{variable-path}?presence", rr.Body.String(); want != got {
@@ -177,7 +177,7 @@ func TestMux_Handle_success(t *testing.T) {
 	}
 
 	{
-		req := httptest.NewRequest(http.MethodPost, "https://localhost:8080/fixed-path/riotemergence?notpresence&presence", nil)
+		req := httptest.NewRequest(http.MethodPost, "https://localhost:8080/fixed-path/gopherburrow?notpresence&presence", nil)
 		rr := httptest.NewRecorder()
 		m.ServeHTTP(rr, req)
 		if want, got := "POST+https://localhost:8080/fixed-path/{variable-path}?presence", rr.Body.String(); want != got {
@@ -186,7 +186,7 @@ func TestMux_Handle_success(t *testing.T) {
 	}
 
 	{
-		req := httptest.NewRequest(http.MethodPost, "https://localhost:8080/fixed-path/riotemergence/fixed-subpath", nil)
+		req := httptest.NewRequest(http.MethodPost, "https://localhost:8080/fixed-path/gopherburrow/fixed-subpath", nil)
 		rr := httptest.NewRecorder()
 		m.ServeHTTP(rr, req)
 		if want, got := "2", rr.Body.String(); want != got {
@@ -195,7 +195,7 @@ func TestMux_Handle_success(t *testing.T) {
 	}
 
 	{
-		req := httptest.NewRequest(http.MethodGet, "https://localhost:8080/fixed-path/riotemergence/fixed-subpath", nil)
+		req := httptest.NewRequest(http.MethodGet, "https://localhost:8080/fixed-path/gopherburrow/fixed-subpath", nil)
 		rr := httptest.NewRecorder()
 		m.ServeHTTP(rr, req)
 		if want, got := "3", rr.Body.String(); want != got {
@@ -204,7 +204,7 @@ func TestMux_Handle_success(t *testing.T) {
 	}
 
 	{
-		req := httptest.NewRequest(http.MethodGet, "https://localhost:8080/fixed-path/riotemergence", nil)
+		req := httptest.NewRequest(http.MethodGet, "https://localhost:8080/fixed-path/gopherburrow", nil)
 		rr := httptest.NewRecorder()
 		m.ServeHTTP(rr, req)
 		if want, got := "GET+https://localhost:8080/fixed-path/{variable-path}", rr.Body.String(); want != got {
@@ -213,7 +213,7 @@ func TestMux_Handle_success(t *testing.T) {
 	}
 
 	{
-		req := httptest.NewRequest(http.MethodGet, "http://localhost:8080/fixed-path/riot/emergence", nil)
+		req := httptest.NewRequest(http.MethodGet, "http://localhost:8080/fixed-path/gopher/burrow", nil)
 		rr := httptest.NewRecorder()
 		m.ServeHTTP(rr, req)
 		if want, got := "5", rr.Body.String(); want != got {
@@ -222,7 +222,7 @@ func TestMux_Handle_success(t *testing.T) {
 	}
 
 	{
-		req := httptest.NewRequest(http.MethodGet, "http://localhost:8080/fixed-path/riotemergence", nil)
+		req := httptest.NewRequest(http.MethodGet, "http://localhost:8080/fixed-path/gopherburrow", nil)
 		rr := httptest.NewRecorder()
 		m.ServeHTTP(rr, req)
 		if want, got := "6", rr.Body.String(); want != got {
@@ -231,7 +231,7 @@ func TestMux_Handle_success(t *testing.T) {
 	}
 
 	{
-		req := httptest.NewRequest(http.MethodGet, "http://localhost/fixed-path/riotemergence", nil)
+		req := httptest.NewRequest(http.MethodGet, "http://localhost/fixed-path/gopherburrow", nil)
 		rr := httptest.NewRecorder()
 		m.ServeHTTP(rr, req)
 		if want, got := "7", rr.Body.String(); want != got {
@@ -240,7 +240,7 @@ func TestMux_Handle_success(t *testing.T) {
 	}
 
 	{
-		req := httptest.NewRequest(http.MethodGet, "http://localhost/fixed/riotemergence", nil)
+		req := httptest.NewRequest(http.MethodGet, "http://localhost/fixed/gopherburrow", nil)
 		rr := httptest.NewRecorder()
 		m.ServeHTTP(rr, req)
 		if want, got := "http://localhost/fixed/{variable-path}", rr.Body.String(); want != got {
@@ -258,7 +258,7 @@ func TestMux_Handle_success(t *testing.T) {
 	}
 
 	{
-		req := httptest.NewRequest(http.MethodGet, "http://localhost/root-path/riot", nil)
+		req := httptest.NewRequest(http.MethodGet, "http://localhost/root-path/gopher", nil)
 		rr := httptest.NewRecorder()
 		m.ServeHTTP(rr, req)
 		if want, got := "10", rr.Body.String(); want != got {
@@ -267,7 +267,7 @@ func TestMux_Handle_success(t *testing.T) {
 	}
 
 	{
-		req := httptest.NewRequest(http.MethodGet, "http://localhost/root-path/riot/emergence", nil)
+		req := httptest.NewRequest(http.MethodGet, "http://localhost/root-path/gopher/burrow", nil)
 		rr := httptest.NewRecorder()
 		m.ServeHTTP(rr, req)
 		if want, got := "10", rr.Body.String(); want != got {
@@ -276,7 +276,7 @@ func TestMux_Handle_success(t *testing.T) {
 	}
 
 	{
-		req := httptest.NewRequest(http.MethodGet, "https://localhost:8080/a-query-only-path/riotemergence?query=a", nil)
+		req := httptest.NewRequest(http.MethodGet, "https://localhost:8080/a-query-only-path/gopherburrow?query=a", nil)
 		rr := httptest.NewRecorder()
 		m.ServeHTTP(rr, req)
 		if want, got := "GET+https://localhost:8080/a-query-only-path/{variable-path}?query=a", rr.Body.String(); want != got {
@@ -285,7 +285,7 @@ func TestMux_Handle_success(t *testing.T) {
 	}
 
 	{
-		req := httptest.NewRequest(http.MethodGet, "http://localhost/not-found/riotemergence", nil)
+		req := httptest.NewRequest(http.MethodGet, "http://localhost/not-found/gopherburrow", nil)
 		rr := httptest.NewRecorder()
 		m.ServeHTTP(rr, req)
 		if want, got := http.StatusNotFound, rr.Code; want != got {
@@ -294,7 +294,7 @@ func TestMux_Handle_success(t *testing.T) {
 	}
 
 	{
-		req := httptest.NewRequest(http.MethodGet, "https://localhost:8080/a-query-only-path/riotemergence?query=b", nil)
+		req := httptest.NewRequest(http.MethodGet, "https://localhost:8080/a-query-only-path/gopherburrow?query=b", nil)
 		rr := httptest.NewRecorder()
 		m.ServeHTTP(rr, req)
 		if want, got := http.StatusNotFound, rr.Code; want != got {
@@ -305,7 +305,7 @@ func TestMux_Handle_success(t *testing.T) {
 	m.NotFoundHandler = newTestHandler("Not Found but OK")
 
 	{
-		req := httptest.NewRequest(http.MethodGet, "https://localhost:8080/a-query-only-path/riotemergence?query=b", nil)
+		req := httptest.NewRequest(http.MethodGet, "https://localhost:8080/a-query-only-path/gopherburrow?query=b", nil)
 		rr := httptest.NewRecorder()
 		m.ServeHTTP(rr, req)
 		if want, got := "Not Found but OK", rr.Body.String(); want != got {
@@ -477,7 +477,7 @@ func TestMux_Handle_failMustNotConflictingWithExistingEntryParentVsFixed(t *test
 	if err := m.Handle(http.MethodGet, "http://localhost:8080/fixed-path/{*}", http.HandlerFunc(emptyHandler)); err != nil {
 		t.Fatal(err)
 	}
-	err := m.Handle(http.MethodGet, "http://localhost:8080/fixed-path/riot/emergence", http.HandlerFunc(emptyHandler))
+	err := m.Handle(http.MethodGet, "http://localhost:8080/fixed-path/gopher/burrow", http.HandlerFunc(emptyHandler))
 	if err != mux.ErrRouteMustNotConflict {
 		t.Fatal("expected: mux.ErrRouteMustNotConflict")
 	}
@@ -485,14 +485,14 @@ func TestMux_Handle_failMustNotConflictingWithExistingEntryParentVsFixed(t *test
 
 func TestMux_Handle_failMustNotConflictingWithExistingEntryFixedVsParent(t *testing.T) {
 	m := &mux.Mux{}
-	if err := m.Handle(http.MethodGet, "http://localhost:8080/fixed-path/riot/emergence", http.HandlerFunc(emptyHandler)); err != nil {
+	if err := m.Handle(http.MethodGet, "http://localhost:8080/fixed-path/gopher/burrow", http.HandlerFunc(emptyHandler)); err != nil {
 		t.Fatal(err)
 	}
 	err := m.Handle(http.MethodGet, "http://localhost:8080/fixed-path/{*}", http.HandlerFunc(emptyHandler))
 	if err != mux.ErrRouteMustNotConflict {
 		t.Fatal("expected: mux.ErrRouteMustNotConflict")
 	}
-	err = m.Handle(http.MethodGet, "http://localhost:8080/fixed-path/riot/{*}", http.HandlerFunc(emptyHandler))
+	err = m.Handle(http.MethodGet, "http://localhost:8080/fixed-path/gopher/{*}", http.HandlerFunc(emptyHandler))
 	if err != mux.ErrRouteMustNotConflict {
 		t.Fatal("expected: mux.ErrRouteMustNotConflict")
 	}
@@ -728,26 +728,26 @@ func TestMux_PathVars_success(t *testing.T) {
 	}
 
 	{
-		r := httptest.NewRequest(http.MethodGet, "https://localhost:8080/fixed-path/riot/emergence", nil)
-		if want, got := "riot", m.PathVars(r)["var1"]; want != got {
+		r := httptest.NewRequest(http.MethodGet, "https://localhost:8080/fixed-path/gopher/burrow", nil)
+		if want, got := "gopher", m.PathVars(r)["var1"]; want != got {
 			t.Fatalf("want=%q, got=%q", want, got)
 		}
 
-		if want, got := "emergence", m.PathVars(r)["var2"]; want != got {
+		if want, got := "burrow", m.PathVars(r)["var2"]; want != got {
 			t.Fatalf("want=%q, got=%q", want, got)
 		}
 	}
 
 	{
-		r := httptest.NewRequest(http.MethodGet, "https://localhost:8080/parent-path/riot/emergence", nil)
-		if want, got := "riot/emergence", m.PathVars(r)["*"]; want != got {
+		r := httptest.NewRequest(http.MethodGet, "https://localhost:8080/parent-path/gopher/burrow", nil)
+		if want, got := "gopher/burrow", m.PathVars(r)["*"]; want != got {
 			t.Fatalf("want=%q, got=%q", want, got)
 		}
 	}
 
 	{
 		m2 := &mux.Mux{}
-		r := httptest.NewRequest(http.MethodGet, "https://localhost:8080/fixed-path/riot/emergence", nil)
+		r := httptest.NewRequest(http.MethodGet, "https://localhost:8080/fixed-path/gopher/burrow", nil)
 		_, f := m2.PathVars(r)["var1"]
 		if want, got := false, f; want != got {
 			t.Fatalf("want=%t, got=%t", want, got)
@@ -766,7 +766,7 @@ func TestGet_success(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	}))
 
-	req := httptest.NewRequest(http.MethodGet, "http://localhost/riot/emergence/", nil)
+	req := httptest.NewRequest(http.MethodGet, "http://localhost/gopher/burrow/", nil)
 	rr := httptest.NewRecorder()
 	m.ServeHTTP(rr, req)
 	if want, got := http.StatusOK, rr.Code; want != got {
@@ -777,7 +777,7 @@ func TestGet_success(t *testing.T) {
 func TestGet_failMustHaveContext(t *testing.T) {
 	m := &mux.Mux{}
 	m.Handle(http.MethodGet, "http://localhost/{*}", http.HandlerFunc(emptyHandler))
-	r := httptest.NewRequest(http.MethodGet, "http://localhost/riot/emergence/", nil)
+	r := httptest.NewRequest(http.MethodGet, "http://localhost/gopher/burrow/", nil)
 	m, err := mux.Get(r)
 	if err != mux.ErrRequestMustHaveContext {
 		t.Fatal("expected: mux.ErrRequestMustHaveContext")
@@ -805,10 +805,10 @@ func ExampleMux() {
 	//  http.ListenAndServe(":8080", m)
 
 	// On tests world we use:
-	req := httptest.NewRequest(http.MethodGet, "http://localhost/riot/emergence/mux", nil)
+	req := httptest.NewRequest(http.MethodGet, "http://localhost/gopher/burrow/mux", nil)
 	rr := httptest.NewRecorder()
 	m.ServeHTTP(rr, req)
 	fmt.Print(rr.Body.String())
 
-	// Output: Hello World "riot" "emergence/mux"
+	// Output: Hello World "gopher" "burrow/mux"
 }
