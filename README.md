@@ -1,15 +1,15 @@
-github.com/riotmergence/mux
+gitlab.com/gopherburrow/mux
 ===
 
-[![GoDoc](https://godoc.org/github.com/riotemergence/mux?status.svg)](https://godoc.org/github.com/riotemergence/mux)
+[![GoDoc](https://godoc.org/gitlab.com/gopherburrow/mux?status.svg)](https://godoc.org/gitlab.com/gopherburrow/mux)
 [![Build Status](https://travis-ci.org/riotemergence/mux.svg?branch=master)](https://travis-ci.org/riotemergence/mux)
-[![Sourcegraph](https://sourcegraph.com/github.com/riotemergence/mux/-/badge.svg)](https://sourcegraph.com/github.com/riotemergence/mux?badge)
+[![Sourcegraph](https://sourcegraph.com/gitlab.com/gopherburrow/mux/-/badge.svg)](https://sourcegraph.com/gitlab.com/gopherburrow/mux?badge)
 
 ![Riot Emergence Logo](https://raw.githubusercontent.com/riotemergence/devguidelines/master/riotemergence-256px.png)
 
-`github.com/riotmergence/mux` Implements an URL mutiplexing matcher and dispatcher. It receive a HTTP request, matches it against a pre-configured table and dispatch it to an `http.Handler`. 
+`gitlab.com/gopherburrow/mux` Implements an URL mutiplexing matcher and dispatcher. It receive a HTTP request, matches it against a pre-configured table and dispatch it to an `http.Handler`. 
 
-It meant to be simple and small. And is made to fit perfectly in riotemergence web project (https://github.com/riotemergence/web) where a HTTP method and an absolute, complete and canonical URL is always requested and is enough to match a request and dispatch it to a Handler. 
+It meant to be simple and small. And is made to fit perfectly in riotemergence web project (https://gitlab.com/gopherburrow/web) where a HTTP method and an absolute, complete and canonical URL is always requested and is enough to match a request and dispatch it to a Handler. 
 
 For a general use mux, I recommend the amazing Gorilla Webkit Mux (https://github.com/gorilla/mux) that have much more advanced mutiplexing/routing/dispatch capabilities. Specifically, I do not use it in Riot Emergence because it is a bit overkill for my project needs.
 
@@ -29,7 +29,7 @@ Table of Contents
 Within a [Go workspace](https://golang.org/doc/code.html#Workspaces):
 
 ```sh
-go get -u github.com/riotemergence/mux
+go get -u gitlab.com/gopherburrow/mux
 ```
 
 # Usage
@@ -37,7 +37,7 @@ go get -u github.com/riotemergence/mux
 Import:
 ```go
 import (
-	"github.com/riotemergence/mux"
+	"gitlab.com/gopherburrow/mux"
 )
 ```
 Create a Mux:
@@ -71,7 +71,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/riotemergence/mux"
+	"gitlab.com/gopherburrow/mux"
 )
 
 var m *mux.Mux
