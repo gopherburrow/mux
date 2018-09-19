@@ -2,14 +2,12 @@ gitlab.com/gopherburrow/mux
 ===
 
 [![GoDoc](https://godoc.org/gitlab.com/gopherburrow/mux?status.svg)](https://godoc.org/gitlab.com/gopherburrow/mux)
-[![Build Status](https://travis-ci.org/riotemergence/mux.svg?branch=master)](https://travis-ci.org/riotemergence/mux)
-[![Sourcegraph](https://sourcegraph.com/gitlab.com/gopherburrow/mux/-/badge.svg)](https://sourcegraph.com/gitlab.com/gopherburrow/mux?badge)
 
-![Riot Emergence Logo](https://raw.githubusercontent.com/riotemergence/devguidelines/master/riotemergence-256px.png)
+![Gopher Burrow Logo](https://gitlab.com/gopherburrow/art/raw/master/gopherburrow.png)
 
 `gitlab.com/gopherburrow/mux` Implements an URL mutiplexing matcher and dispatcher. It receive a HTTP request, matches it against a pre-configured table and dispatch it to an `http.Handler`. 
 
-It meant to be simple and small. And is made to fit perfectly in riotemergence web project (https://gitlab.com/gopherburrow/web) where a HTTP method and an absolute, complete and canonical URL is always requested and is enough to match a request and dispatch it to a Handler. 
+It meant to be simple and small. And is made to fit perfectly in a web project (https://gitlab.com/gopherburrow/web) where a HTTP method and an absolute, complete and canonical URL is always requested and is enough to match a request and dispatch it to a Handler. 
 
 For a general use mux, I recommend the amazing Gorilla Webkit Mux (https://github.com/gorilla/mux) that have much more advanced mutiplexing/routing/dispatch capabilities. Specifically, I do not use it in Riot Emergence because it is a bit overkill for my project needs.
 
