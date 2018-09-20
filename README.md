@@ -7,11 +7,11 @@ gitlab.com/gopherburrow/mux
 
 ![Gopher Burrow Logo](https://gitlab.com/gopherburrow/art/raw/master/gopherburrow.png)
 
-`gitlab.com/gopherburrow/mux` Implements an URL mutiplexing matcher and dispatcher. It receive a HTTP request, matches it against a pre-configured table and dispatch it to an `http.Handler`. 
+`gitlab.com/gopherburrow/mux` Implements an URL mutiplexing matcher and dispatcher. It receives an HTTP request then it compares it with a pre-configured table and dispatch it to an `http.Handler`. 
 
-It meant to be simple and small. And is made to fit perfectly in a web project (https://gitlab.com/gopherburrow/web) where a HTTP method and an absolute, complete and canonical URL is always requested and is enough to match a request and dispatch it to a Handler. 
+It meant to be simple and small and is made to fit perfectly in a multitenancy web project, where only an HTTP method and an absolute, complete and canonical URL is needed to match a request and dispatch it to a Handler. 
 
-For a general use mux, I recommend the amazing Gorilla Webkit Mux (https://github.com/gorilla/mux) that have much more advanced mutiplexing/routing/dispatch capabilities. Specifically, I do not use it in Riot Emergence because it is a bit overkill for my project needs.
+For a general use mux, I recommend the amazing Gorilla Webkit Mux (https://github.com/gorilla/mux) that has much more advanced mutiplexing/routing/dispatch capabilities. Specifically, I do not use it in Riot Emergence because it is a bit overkill for my project needs.
 
 Features:
 * Complete URL matching using only a HTTP Method (`GET`, `POST`...) and a simple URL pattern;
