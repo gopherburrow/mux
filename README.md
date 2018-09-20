@@ -2,6 +2,8 @@ gitlab.com/gopherburrow/mux
 ===
 
 [![GoDoc](https://godoc.org/gitlab.com/gopherburrow/mux?status.svg)](https://godoc.org/gitlab.com/gopherburrow/mux)
+[![pipeline status](https://gitlab.com/gopherburrow/mux/badges/master/pipeline.svg)](https://gitlab.com/gopherburrow/mux/commits/master)
+[![coverage report](https://gitlab.com/gopherburrow/mux/badges/master/coverage.svg)](https://gitlab.com/gopherburrow/mux/commits/master)
 
 ![Gopher Burrow Logo](https://gitlab.com/gopherburrow/art/raw/master/gopherburrow.png)
 
