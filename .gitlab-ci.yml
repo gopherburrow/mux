@@ -2,9 +2,10 @@ image: registry.gitlab.com/gopherburrow/golang-git
 
 test:
   script:
-    - export PACKAGE=${CI_PROJECT_URL#https://}
-    - go get -u -t ${PACKAGE}
-    - rm -rf "${GOPATH}"/src/${PACKAGE}
-    - git clone -b ${CI_COMMIT_REF_NAME} ${CI_PROJECT_URL} "${GOPATH}"/src/${PACKAGE}
+    - export PACKAGE="${CI_PROJECT_URL#https://}"
+    - export PACKAGE_DIR="${GOPATH}/src/${PACKAGE}"
+    - export PACKAGE_PARENT_DIR="${PACKAGE_DIR%/*}"
+    - mkdir -p "${PACKAGE_PARENT_DIR}"
+    - ln -s "${CI_PROJECT_DIR}" "${PACKAGE_DIR}"
+    - cd "${PACKAGE_DIR}" ; go get ./... ; cd "${CI_PROJECT_DIR}"
     - go test -cover ${PACKAGE}
-
