@@ -535,7 +535,11 @@ func (m *Mux) PathVars(r *http.Request) map[string]string {
 	//When the route is found return  each path segment value based on the previously processed and stored index...
 	entry := m.entries[i]
 	m.entriesLock.RUnlock()
-	pathSegs := splitPathSegs(r.URL.Path)
+	path := r.URL.RawPath
+	if path == "" {
+		path = r.URL.Path
+	}
+	pathSegs := splitPathSegs(path)
 	for k, v := range entry.route.vars {
 		//...for sub paths join all sub segments values.
 		if k == "*" {
@@ -674,7 +678,7 @@ func compareRequestRoute(req *http.Request, route *muxRoute) int {
 	}
 
 	//Extract path segments from request
-	reqSegs := splitPathSegs(req.URL.RequestURI())
+	reqSegs := splitPathSegs(req.URL.EscapedPath())
 
 	//Compare the url path...
 	reqLen, routeLen := len(reqSegs), len(route.path)
@@ -686,7 +690,7 @@ func compareRequestRoute(req *http.Request, route *muxRoute) int {
 
 		//...a variable segment tested against a request segment matches, so test the subsequent segments...
 		reqSeg, routeSeg := reqSegs[i], route.path[i]
-		if dynRouteSeg := strings.HasPrefix(routeSeg, "{") && strings.HasSuffix(routeSeg, "}"); dynRouteSeg {
+		if strings.HasPrefix(routeSeg, "{") && strings.HasSuffix(routeSeg, "}") {
 			continue
 		}
 

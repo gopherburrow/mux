@@ -353,6 +353,49 @@ func TestMux_Handle_successInPathAndPathWildcard(t *testing.T) {
 	}
 }
 
+func TestMux_BugFix_1(t *testing.T) {
+	m := &mux.Mux{}
+	if err := m.Handle(http.MethodGet, "http://localhost/path?var=value", newTestHandler("ok")); err != nil {
+		t.Fatal(err)
+	}
+	req := httptest.NewRequest(http.MethodGet, "http://localhost/path?var=value", nil)
+	rr := httptest.NewRecorder()
+	m.ServeHTTP(rr, req)
+	if want, got := "ok", rr.Body.String(); want != got {
+		t.Fatalf("want=%s, got=%s", want, got)
+	}
+}
+
+func TestMux_BugFix_2(t *testing.T) {
+	m := &mux.Mux{}
+	if err := m.Handle(http.MethodGet, "http://localhost/{path}?var=value", newTestHandler("http://localhost/{path}?var=value")); err != nil {
+		t.Fatal(err)
+	}
+	req := httptest.NewRequest(http.MethodGet, "http://localhost/path?var=value", nil)
+	rr := httptest.NewRecorder()
+	m.ServeHTTP(rr, req)
+	if want, got := "http://localhost/{path}?var=value", rr.Body.String(); want != got {
+		t.Fatalf("want=%s, got=%s", want, got)
+	}
+}
+
+func TestMux_BugFix_3(t *testing.T) {
+	m := &mux.Mux{}
+	if err := m.Handle(http.MethodGet, "http://localhost//api/passwords/{resource}?verify", newTestHandler("http://localhost//api/passwords/{resource}?verify")); err != nil {
+		t.Fatal(err)
+	}
+	req := httptest.NewRequest(http.MethodGet, "http://localhost//api/passwords/https%3A%2F%2Flocalhost%3A8080%2Fclients%2Fpasswords?verify", nil)
+	rr := httptest.NewRecorder()
+	m.ServeHTTP(rr, req)
+	if want, got := "http://localhost//api/passwords/{resource}?verify", rr.Body.String(); want != got {
+		t.Fatalf("want=%s, got=%s", want, got)
+	}
+	resource := m.PathVars(req)["resource"]
+	if want, got := "https%3A%2F%2Flocalhost%3A8080%2Fclients%2Fpasswords", resource; want != got {
+		t.Fatalf("want=%s, got=%s", want, got)
+	}
+}
+
 func TestMux_Handle_failHttpMethodMustBeNotEmpty(t *testing.T) {
 	m := &mux.Mux{}
 	err := m.Handle("", "http://localhost:8080/fixed-path/{variable-path}", http.HandlerFunc(emptyHandler))
