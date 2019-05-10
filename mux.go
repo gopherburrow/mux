@@ -221,13 +221,19 @@ func (route queryRoute) String() string {
 	return b.String()
 }
 
+//pathVarInfo represents a path variable position and order.
+type pathVarInfo struct {
+	pathPos int
+	order   int
+}
+
 //muxRoute represents a route in a mux entry.
 type muxRoute struct {
 	method string
 	scheme string
 	host   string
 	path   []string
-	vars   map[string]int
+	vars   map[string]pathVarInfo
 	query  queryRoute
 }
 
@@ -262,7 +268,8 @@ func newMuxRoute(httpMethod string, urlPattern string) (*muxRoute, error) {
 
 	//And then extract dynamic vars from path segments, creating a map from names to path segment indexes.
 	lastSeg := len(pathSegments) - 1
-	vars := map[string]int{}
+	vars := map[string]pathVarInfo{}
+	order := 0
 	for i, v := range pathSegments {
 		if !strings.HasPrefix(v, "{") || !strings.HasSuffix(v, "}") {
 			continue
@@ -277,7 +284,8 @@ func newMuxRoute(httpMethod string, urlPattern string) (*muxRoute, error) {
 		if _, r := vars[k]; r {
 			return nil, ErrURLPatternInvalidPathVar
 		}
-		vars[k] = i
+		vars[k] = pathVarInfo{i, order}
+		order++
 	}
 
 	//Create a structured query routing.
@@ -513,7 +521,7 @@ func (m *Mux) notFound(w http.ResponseWriter, r *http.Request) {
 
 //PathVars extract all the variable path segments values as a map from a request that was handled by a Mux.
 //
-//It returns a map with all variables found using the name during the Handle(...) call.
+//It returns a map with all variables found in path during the Handle(...) call.
 //
 //Only path segments can be extracted using PathVars. There is no scheme, host, port or query values extraction mechanisms in Mux, they can be extracted throught the usual methods in the http.Request parameter.
 func (m *Mux) PathVars(r *http.Request) map[string]string {
@@ -543,12 +551,55 @@ func (m *Mux) PathVars(r *http.Request) map[string]string {
 	for k, v := range entry.route.vars {
 		//...for sub paths join all sub segments values.
 		if k == "*" {
-			vars[k] = strings.Join(pathSegs[v:], "/")
+			vars[k] = strings.Join(pathSegs[v.pathPos:], "/")
 			continue
 		}
-		vars[k] = pathSegs[v]
+		vars[k] = pathSegs[v.pathPos]
 	}
 	return vars
+}
+
+//PathValues extract all the variable path segments values as a slice from a request that was handled by a Mux.
+//
+//It returns a slice with all variables found in path during the Handle(...) call.
+//
+//Only path segments can be extracted using PathValues. There is no scheme, host, port or query values extraction mechanisms in Mux, they can be extracted throught the usual methods in the http.Request parameter.
+func (m *Mux) PathValues(r *http.Request) []string {
+	//Find the used route.
+	values := []string{}
+	m.entriesLock.RLock()
+	eLen := len(m.entries)
+	i, _, found := searchRange(
+		eLen, func(i int) int {
+			return compareRequestRoute(r, m.entries[i].route)
+		})
+
+	//If not found the route match. Return the empty map.
+	if !found {
+		m.entriesLock.RUnlock()
+		return values
+	}
+
+	//When the route is found return  each path segment value based on the previously processed and stored index...
+	entry := m.entries[i]
+	m.entriesLock.RUnlock()
+	path := r.URL.RawPath
+	if path == "" {
+		path = r.URL.Path
+	}
+	pathSegs := splitPathSegs(path)
+
+	values = make([]string, len(entry.route.vars))
+
+	for k, v := range entry.route.vars {
+		//...for sub paths join all sub segments values.
+		if k == "*" {
+			values[v.order] = strings.Join(pathSegs[v.pathPos:], "/")
+			continue
+		}
+		values[v.order] = pathSegs[v.pathPos]
+	}
+	return values
 }
 
 //String shows a sorted list of registered routes.

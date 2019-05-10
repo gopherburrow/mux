@@ -798,6 +798,43 @@ func TestMux_PathVars_success(t *testing.T) {
 	}
 }
 
+func TestMux_PathValues_success(t *testing.T) {
+	m := &mux.Mux{}
+	if err := m.Handle(http.MethodGet, "https://localhost:8080/fixed-path/{var1}/{ var2 }", http.HandlerFunc(emptyHandler)); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := m.Handle(http.MethodGet, "https://localhost:8080/parent-path/{*}", http.HandlerFunc(emptyHandler)); err != nil {
+		t.Fatal(err)
+	}
+
+	{
+		r := httptest.NewRequest(http.MethodGet, "https://localhost:8080/fixed-path/gopher/burrow", nil)
+		values := m.PathValues(r)
+		if wantSize, wantValue1, wantValue2, gotSize, gotValue1, gotValue2 := 2, "gopher", "burrow", len(values), values[0], values[1]; wantSize != gotSize || wantValue1 != gotValue1 || wantValue2 != gotValue2 {
+			t.Fatalf("wantSize=%d, wantValue1=%q, wantValue2=%q, gotSize=%d, gotValue1=%q, gotValue2=%q", wantSize, wantValue1, wantValue2, gotSize, gotValue1, gotValue2)
+		}
+
+	}
+
+	{
+		r := httptest.NewRequest(http.MethodGet, "https://localhost:8080/parent-path/gopher/burrow", nil)
+		values := m.PathValues(r)
+		if wantSize, wantValue, gotSize, gotValue := 1, "gopher/burrow", len(values), values[0]; wantSize != gotSize || wantValue != gotValue {
+			t.Fatalf("wantSize=%q, wantValue=%q, gotSize=%q, gotValue=%q", wantSize, wantValue, gotSize, gotValue)
+		}
+	}
+
+	{
+		m2 := &mux.Mux{}
+		r := httptest.NewRequest(http.MethodGet, "https://localhost:8080/fixed-path/gopher/burrow", nil)
+		values := m2.PathValues(r)
+		if want, got := 0, len(values); want != got {
+			t.Fatalf("want=%d, got=%d", want, got)
+		}
+	}
+}
+
 func TestGet_success(t *testing.T) {
 	m := &mux.Mux{}
 	m.Handle(http.MethodGet, "http://localhost/{*}", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
