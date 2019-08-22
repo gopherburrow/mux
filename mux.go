@@ -229,10 +229,10 @@ type pathVarInfo struct {
 
 //muxRoute represents a route in a mux entry.
 type muxRoute struct {
-	method string
 	scheme string
 	host   string
 	path   []string
+	method string
 	vars   map[string]pathVarInfo
 	query  queryRoute
 }
@@ -296,11 +296,11 @@ func newMuxRoute(httpMethod string, urlPattern string) (*muxRoute, error) {
 
 	//And finally created.
 	return &muxRoute{
-		method: httpMethod,
 		scheme: url.Scheme,
 		host:   url.Host,
 		path:   pathSegments,
 		vars:   vars,
+		method: httpMethod,
 		query:  queryRoute,
 	}, nil
 }
@@ -492,9 +492,24 @@ func (m *Mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//Creates a subset with common paths, but maybe different methods.
+	subEntries := m.entries[lo:hi]
+
+	//Compare methods. Delayed comparison of methods due to possibility to handler HTTP 405 status returns.
+	lo, hi, found = searchRange(
+		len(subEntries), func(i int) int {
+			return strings.Compare(r.Method, subEntries[i].route.method)
+		})
+
+	//If a match is not found, call NotFoundHandler.
+	if !found {
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		return
+	}
+
 	//Test query strings for a match.
 	i := lo
-	for ; i < hi && !m.entries[i].route.query.Acceptable(r.URL.Query()); i++ {
+	for ; i < hi && !subEntries[i].route.query.Acceptable(r.URL.Query()); i++ {
 	}
 
 	//And, again, If a match is not found, call NotFoundHandler.
@@ -506,7 +521,7 @@ func (m *Mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	m.entriesLock.RUnlock()
 
 	//But if it is found, call the assigned Handler passing the mux in Context.
-	m.entries[i].handler.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxGet, m)))
+	subEntries[i].handler.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxGet, m)))
 }
 
 //notFound calls a handler when a route match is not found in ServeHTTP method. And if it is not set call the default http.NotFound handler.
@@ -616,7 +631,7 @@ func (m *Mux) String() string {
 //It differs from a simple static comparation because it verifies some dynamic path segments and query parameters vs static ones.
 func compareDynamicRoutes(r1, r2 *muxRoute) int {
 	//Compare the common static part.
-	if r := compareMethodSchemeHost(r1.method, r2.method, r1.scheme, r2.scheme, r1.host, r2.host); r != 0 {
+	if r := compareSchemeHost(r1.scheme, r2.scheme, r1.host, r2.host); r != 0 {
 		return r
 	}
 
@@ -644,6 +659,11 @@ func compareDynamicRoutes(r1, r2 *muxRoute) int {
 	}
 	//...if everything matches until now, compare path sizes.
 	if r := rp1Len - rp2Len; r != 0 {
+		return r
+	}
+
+	//Compare methods. Delayed comparison of methods due to possibility to handler HTTP 405 status returns.
+	if r := strings.Compare(r1.method, r2.method); r != 0 {
 		return r
 	}
 
@@ -675,11 +695,11 @@ func compareDynamicRoutes(r1, r2 *muxRoute) int {
 //It is a simple static comparation. Variable path segments and query parameter and values are not taken into account.
 func compareStaticRoutes(r1, r2 *muxRoute) int {
 	//Compare the common static part.
-	if r := compareMethodSchemeHost(r1.method, r2.method, r1.scheme, r2.scheme, r1.host, r2.host); r != 0 {
+	if r := compareSchemeHost(r1.scheme, r2.scheme, r1.host, r2.host); r != 0 {
 		return r
 	}
 
-	//Compare path segments
+	//Compare path segments...
 	rp1Len, rp2Len := len(r1.path), len(r2.path)
 	for i := 0; i < rp1Len && i < rp2Len; i++ {
 		r := strings.Compare(r1.path[i], r2.path[i])
@@ -687,7 +707,13 @@ func compareStaticRoutes(r1, r2 *muxRoute) int {
 			return r
 		}
 	}
+	//...if everything matches until now, compare path sizes.
 	if r := rp1Len - rp2Len; r != 0 {
+		return r
+	}
+
+	//Compare methods. Delayed comparison of methods due to possibility to handler HTTP 405 status returns.
+	if r := strings.Compare(r1.method, r2.method); r != 0 {
 		return r
 	}
 
@@ -713,15 +739,16 @@ func compareStaticRoutes(r1, r2 *muxRoute) int {
 }
 
 //compareRequestRoute compares two routes at lookup on routing table. It is used to find a entries when serving requests.
-//It is similar to dynamic comparation but it assumes that only the routing side could have dynamic parts, while the request side only have static parts.
+//It is similar to dynamic comparation but it assumes that only the routing side could have dynamic parts,
+//while the request side only have static parts.
+//It does not test HTTP method due to the possible different handling of 405 and 404 status codes.
 func compareRequestRoute(req *http.Request, route *muxRoute) int {
 	scheme := "http"
 	if req.TLS != nil {
 		scheme = "https"
 	}
 	//Compare the common static part.
-	if r := compareMethodSchemeHost(
-		req.Method, route.method,
+	if r := compareSchemeHost(
 		scheme, route.scheme,
 		req.Host, route.host,
 	); r != 0 {
@@ -750,16 +777,12 @@ func compareRequestRoute(req *http.Request, route *muxRoute) int {
 			return r
 		}
 	}
-
 	//...if everything matches until now, compare path sizes.
 	return reqLen - routeLen
 }
 
-//compareMethodSchemeHost Compares the common static url parts.
-func compareMethodSchemeHost(httpMethod1, httpMethod2, scheme1, scheme2, host1, host2 string) int {
-	if r := strings.Compare(httpMethod1, httpMethod2); r != 0 {
-		return r
-	}
+//compareSchemeHost Compares the common static url parts.
+func compareSchemeHost(scheme1, scheme2, host1, host2 string) int {
 	if r := strings.Compare(scheme1, scheme2); r != 0 {
 		return r
 	}

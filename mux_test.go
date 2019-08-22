@@ -321,12 +321,12 @@ GET+http://localhost:8080/fixed-path/{variable-path}
 GET+http://localhost:8080/fixed-path/{variable-path}/{variable-subpath}
 GET+https://localhost:8080/a-query-only-path/{variable-path}?query=a
 GET+https://localhost:8080/fixed-path/{variable-path}
-GET+https://localhost:8080/fixed-path/{variable-path}/fixed-subpath
 POST+https://localhost:8080/fixed-path/{variable-path}?query=a&query=c
 POST+https://localhost:8080/fixed-path/{variable-path}?presence
 POST+https://localhost:8080/fixed-path/{variable-path}?query=a
 POST+https://localhost:8080/fixed-path/{variable-path}?query=c
 POST+https://localhost:8080/fixed-path/{variable-path}
+GET+https://localhost:8080/fixed-path/{variable-path}/fixed-subpath
 POST+https://localhost:8080/fixed-path/{variable-path}/fixed-subpath
 `, m.String(); want != got {
 		t.Fatalf("want=%q, got=%q", want, got)
@@ -864,6 +864,19 @@ func TestGet_failMustHaveContext(t *testing.T) {
 	}
 	if m != nil {
 		t.Fatal("expected: nil")
+	}
+}
+
+func TestMux_failMethodNotAllowed(t *testing.T) {
+	m := &mux.Mux{}
+	if err := m.Handle(http.MethodGet, "http://localhost/{path}?var=value", newTestHandler("GET+http://localhost/{path}?var=value")); err != nil {
+		t.Fatal(err)
+	}
+	req := httptest.NewRequest(http.MethodPost, "http://localhost/path?var=value", nil)
+	rr := httptest.NewRecorder()
+	m.ServeHTTP(rr, req)
+	if want, got := http.StatusMethodNotAllowed, rr.Code; want != got {
+		t.Fatalf("want=%d, got=%d", want, got)
 	}
 }
 
